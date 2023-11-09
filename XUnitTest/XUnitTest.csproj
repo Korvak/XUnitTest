@@ -1,0 +1,21 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>c3aa3e57-8c1b-492b-bdfb-7f213e82457f</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EntitiesServiceContracts\EntitiesServiceContracts.csproj" />
+    <ProjectReference Include="..\EntitiesServices\EntitiesServices.csproj" />
+    <ProjectReference Include="..\FinhubServiceContracts\FinhubServiceContracts.csproj" />
+    <ProjectReference Include="..\FinhubServices\FinhubServices.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\css\" />
+  </ItemGroup>
+
+</Project>
