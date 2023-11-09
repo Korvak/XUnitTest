@@ -10,8 +10,8 @@ namespace FinhubServiceContracts.Contracts
     public interface IFinhubService
     {
 
-        Task<FinhubCompanyProfileResponse?> GetCompanyProfile(string stockSymbol);
-        Task<FinhubQuoteResponse?> GetStockPriceQuote(string stockSymbol);
+        Task<FinhubCompanyProfileResponse?> GetCompanyProfile(FinhubCompanyProfileRequest request);
+        Task<FinhubQuoteResponse?> GetStockPriceQuote(FinhubQuoteRequest request);
 
     }
 }

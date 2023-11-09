@@ -2,14 +2,14 @@
 using System.Text.Json;
 using Xunit.Abstractions;
 using Moq;
+using Microsoft.Extensions.Options;
+using System.Reflection;
 //Service to be tested
 using FinhubServiceContracts.Contracts;
 using FinhubServiceContracts.DTO;
 using FinhubServices.Services;
 using FinhubServices.ConfigOptions;
-using Microsoft.Extensions.Options;
 using FinhubEntities.Models;
-using System.Reflection;
 
 namespace UnitTest
 {
@@ -36,26 +36,32 @@ namespace UnitTest
             }).Build();
             //we create the mock options
             var configMock = new Mock<IOptions<FinhubOptions>>();
+            var httpMock = new Mock<IHttpClientFactory>();
+            var httpClientMock = new Mock<HttpClient>();
             //we get the data
             FinhubOptions finhubOptions = config.GetSection("Finhub").Get<FinhubOptions>();
             //we setup the data
             configMock.Setup(o => o.Value).Returns(finhubOptions);
-            IFinhubService service = new FinhubService(configMock.Object);
+            httpMock.Setup(factory => factory.CreateClient(It.IsAny<string>() ) ).Returns( httpClientMock.Object ); 
+            IFinhubService service = new FinhubService(httpMock.Object, configMock.Object);
             return service;
         }
 
 
         [Fact]
-        public async void Invalid_GetCompanyProfile() 
+        public async void Invalid_GetCompanyProfile()
         {
             //arrange
             IFinhubService service = GetFinhubService();
-            string stockSymbol = "";
+            var request = new FinhubCompanyProfileRequest()
+            {
+                StockSymbol = ""
+            };
             //assert
-            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            await Assert.ThrowsAsync<ArgumentException>(async () =>
             {
                 //act
-                await service.GetCompanyProfile(stockSymbol);
+                await service.GetCompanyProfile(request);
             });
         }
 
@@ -65,7 +71,10 @@ namespace UnitTest
         {
             //arrange
             IFinhubService service = GetFinhubService();
-            string stockSymbol = "MSFT";
+            var request = new FinhubCompanyProfileRequest()
+            {
+                StockSymbol = "MSFT"
+            };
             //since this is a real time service, the result will be updated every so often , so we need to synchronize it before doing the tests
             FinhubCompanyProfileResponse expected = new FinhubCompanyProfileResponse()
             {
@@ -85,7 +94,7 @@ namespace UnitTest
                 RetrievalDate = DateTime.UtcNow
             };
             //act
-            FinhubCompanyProfileResponse? actual = await service.GetCompanyProfile(stockSymbol);
+            FinhubCompanyProfileResponse? actual = await service.GetCompanyProfile(request);
             //assert
             Assert.Equal(expected, actual);
         }
@@ -95,12 +104,15 @@ namespace UnitTest
         {
             //arrange
             IFinhubService service = GetFinhubService();
-            string stockSymbol = "";
+            var request = new FinhubQuoteRequest()
+            {
+                StockSymbol = ""
+            };
             //assert
-            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            await Assert.ThrowsAsync<ArgumentException>(async () =>
             {
                 //act
-                await service.GetStockPriceQuote(stockSymbol);
+                await service.GetStockPriceQuote(request);
             });
         }
 
@@ -109,7 +121,10 @@ namespace UnitTest
         {
             //arrange
             IFinhubService service = GetFinhubService();
-            string stockSymbol = "MSFT";
+            var request = new FinhubQuoteRequest()
+            {
+                StockSymbol = "MSFT"
+            };
             //since this is a real time service, the result will be updated every so often , so we need to synchronize it before doing the tests
             FinhubQuoteResponse expected = new FinhubQuoteResponse()
             {
@@ -123,7 +138,7 @@ namespace UnitTest
                 RetrievalDate = DateTime.UtcNow
             };
             //act
-            FinhubQuoteResponse? actual = await service.GetStockPriceQuote(stockSymbol);
+            FinhubQuoteResponse? actual = await service.GetStockPriceQuote(request);
             //assert
             Assert.Equal(expected, actual);
         }

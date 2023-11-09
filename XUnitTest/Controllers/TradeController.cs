@@ -39,8 +39,16 @@ namespace FinhubStockTest.Controllers
             {
                 stockSymbol = _tradingOptions.DefaultStockSymbol ?? "";
             }
-            FinhubCompanyProfileResponse? companyProfile = await _finhubService.GetCompanyProfile(stockSymbol);
-            FinhubQuoteResponse? stockQuote = await _finhubService.GetStockPriceQuote(stockSymbol);
+            FinhubCompanyProfileResponse? companyProfile = await _finhubService.GetCompanyProfile(
+                new FinhubCompanyProfileRequest()
+                {
+                    StockSymbol = stockSymbol
+                });
+            FinhubQuoteResponse? stockQuote = await _finhubService.GetStockPriceQuote(
+                new FinhubQuoteRequest()
+                {
+                    StockSymbol = stockSymbol
+                });
             BuyOrderRequest request = new BuyOrderRequest()
             {
                 StockName = companyProfile?.Name,
