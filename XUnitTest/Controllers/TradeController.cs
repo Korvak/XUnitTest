@@ -9,6 +9,7 @@ using FinhubServiceContracts.DTO;
 using EntitiesServiceContracts.Contracts;
 using EntitiesServiceContracts.DTO;
 using EntitiesServiceContracts.DTO.StockOrders;
+using XUnitTest.Models;
 
 namespace FinhubStockTest.Controllers
 {
@@ -49,15 +50,14 @@ namespace FinhubStockTest.Controllers
                 {
                     StockSymbol = stockSymbol
                 });
-            BuyOrderRequest request = new BuyOrderRequest()
+            StockTrade model = new StockTrade()
             {
                 StockName = companyProfile?.Name,
                 StockSymbol = stockSymbol,
                 Price = stockQuote?.CurrentPrice ?? -1,
-                Quantity =  1,
+                Quantity =  0,
             };
             //we make the request
-            BuyOrderResponse? model = await _stocksService.CreateBuyOrder(request);
             return View(model);
         }
     }
